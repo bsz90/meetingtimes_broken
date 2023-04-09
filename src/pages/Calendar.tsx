@@ -20,12 +20,10 @@ export function Calendar() {
 
   const firstDayOfSchool = new Date(2022, 7, 29);
 
-  const staticHolidays = { "11/11": "Veterans Day" };
-
   const getKeyFromDate = (date: Date) =>
     `${date.getMonth() + 1}/${date.getDate()}`;
 
-  console.log(createArray(new Date(2022, 10, 1), new Date(2022, 11, 16)));
+  console.log(createArray(new Date(2022, 10, 1), new Date(2023, 1, 28)));
 
   const cycleDays = 8;
 
