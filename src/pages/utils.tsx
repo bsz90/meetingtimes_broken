@@ -1,5 +1,6 @@
 import { dynamicHolidays, months, staticHolidays } from "./constants";
 import { Counter } from "./types";
+import { HDate, HebrewCalendar } from "@hebcal/core";
 
 const getDays = (milliseconds: number) =>
   Math.round(milliseconds / (1000 * 60 * 60 * 24)) + 1;
@@ -10,15 +11,17 @@ const numOfDaysInMonth = (date: Date) => {
   return new Date(year, month + 1, 0).getDate();
 };
 
-export const createArray = (startDay: Date, lastDay: Date) => {
+export const createArray = (firstDay: Date, lastDay: Date) => {
   //logic to count # of days between days
-  const totalDays = getDays(lastDay.getTime() - startDay.getTime());
+  const totalDays = getDays(lastDay.getTime() - firstDay.getTime());
+
+  const firstDate = firstDay.getDate() - 1;
 
   //create offsets to know when to start the first day, have the looping function -
-  const firstDayId = startDay.getDay() - 1;
+  const firstDayId = firstDay.getDay() - 1;
 
   const numOfWeeksBetweenDates = (() => {
-    const daysInFirstWeek = 6 - startDay.getDay() + 1;
+    const daysInFirstWeek = 6 - firstDay.getDay() + 1;
     const daysInLastWeek = lastDay.getDay() + 1;
 
     const fullWeeks = (totalDays - daysInFirstWeek - daysInLastWeek) / 7;
@@ -26,9 +29,9 @@ export const createArray = (startDay: Date, lastDay: Date) => {
     return fullWeeks + 2;
   })();
 
-  const firstMonth = startDay.getMonth();
+  const firstMonth = firstDay.getMonth();
   const lastMonth = lastDay.getMonth();
-  const firstYear = startDay.getFullYear();
+  const firstYear = firstDay.getFullYear();
   const lastYear = lastDay.getFullYear();
 
   const numOfUniqueMonths = (() => {
@@ -42,7 +45,7 @@ export const createArray = (startDay: Date, lastDay: Date) => {
   const daysForEachUniqueMonth: number[] = [];
 
   for (let i = 0; i < numOfUniqueMonths; i++) {
-    const currentMonth = startDay;
+    const currentMonth = firstDay;
     currentMonth.setMonth((firstMonth + i) % 12);
     daysForEachUniqueMonth.push(numOfDaysInMonth(currentMonth));
   }
@@ -58,9 +61,10 @@ export const createArray = (startDay: Date, lastDay: Date) => {
   const letterDays = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
   let counter: Counter = {
-    date: 0 - firstDayId - 1,
+    date: firstDate - firstDayId - 1,
     week: 0,
-    month: 0,
+    month: firstMonth,
+    year: firstYear,
     letterDays: 0,
     occurence: 0,
     occurenceCounter: 0,
@@ -78,6 +82,11 @@ export const createArray = (startDay: Date, lastDay: Date) => {
     if (j === 6) counter.week++;
     if (counter.date === daysInCurrentMonth) {
       counter.month++;
+
+      if (counter.month === 12) {
+        counter.year++;
+        counter.month = 0;
+      }
       counter.date = 0;
       counter.week = 0;
       counter.occurence = 0;
@@ -85,11 +94,23 @@ export const createArray = (startDay: Date, lastDay: Date) => {
     }
   };
 
+  //function to determine if it's a jewishHoliday
+  const jewishHoliday = (month: number, day: number, year: number) => {
+    const roshHashanah = "1 Tishrei";
+    const yomKippur = "10 Tishrei";
+    const date = `${new HDate(
+      new Date(year, month, day + 1)
+    ).getDate()} ${new HDate(new Date(year, month, day + 1)).getMonthName()}`;
+
+    return date === roshHashanah || date === yomKippur;
+  };
+
   for (let i = 0; i < newArray.length; i++) {
     for (let j = 0; j < newArray[i].length; j++) {
       //array of # of days in each month present in date range
-      const daysInCurrentMonth = daysForEachUniqueMonth[counter.month];
-      const id = (firstMonth + counter.month) % 12;
+      const daysInCurrentMonth =
+        daysForEachUniqueMonth[counter.month - firstMonth];
+
       //condition to skip weekends
       if (j === 0 || j === 6) {
         tick(daysInCurrentMonth, j);
@@ -97,13 +118,18 @@ export const createArray = (startDay: Date, lastDay: Date) => {
       }
 
       //condition to check if it's a static holiday
-      if (staticHolidays[id].some(({ date }) => date - 1 === counter.date)) {
+      if (
+        staticHolidays[counter.month].some(
+          ({ date }) => date - 1 === counter.date
+        )
+      ) {
         tick(daysInCurrentMonth, j);
         continue;
       }
+
       //condition to check if it's a dynamic holiday
       if (
-        dynamicHolidays[id].some((holiday) => {
+        dynamicHolidays[counter.month].some((holiday) => {
           if (
             holiday.dateRange[0] <= counter.date &&
             counter.date <= holiday.dateRange[1]
@@ -133,6 +159,12 @@ export const createArray = (startDay: Date, lastDay: Date) => {
         continue;
       }
 
+      // check if it's a jewish holiday
+      if (jewishHoliday(counter.month, counter.date, counter.year)) {
+        tick(daysInCurrentMonth, j);
+        continue;
+      }
+
       //use id to access the letterDays array to add letter day onto newArray
       const letterDaysId =
         counter.letterDays - firstDayId < 0
@@ -142,7 +174,7 @@ export const createArray = (startDay: Date, lastDay: Date) => {
       newArray[i][j] =
         letterDaysId < 0
           ? 0
-          : months[id] + letterDays[letterDaysId] + counter.date;
+          : months[counter.month] + letterDays[letterDaysId] + counter.date;
 
       //tick up letterDays and date after use
       counter.letterDays++;
@@ -152,5 +184,3 @@ export const createArray = (startDay: Date, lastDay: Date) => {
 
   return newArray;
 };
-
-export const isHoliday = () => {};
