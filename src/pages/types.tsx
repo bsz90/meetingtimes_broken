@@ -8,6 +8,7 @@ export type DynamicHoliday = {
 };
 
 export type StaticHolidays = {
+  month: number;
   date: number;
   name: string;
   specialConditions?: (counter: Counter, j: number) => boolean;
@@ -15,8 +16,10 @@ export type StaticHolidays = {
 
 export type Counter = {
   date: number;
+  daysElapsed: number;
   week: number;
   month: number;
+  monthsElapsed: number;
   year: number;
   letterDays: number;
   occurence: number;

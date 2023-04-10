@@ -1,6 +1,17 @@
 import { dynamicHolidays, months, staticHolidays } from "./constants";
 import { Counter } from "./types";
-import { HDate, HebrewCalendar } from "@hebcal/core";
+import { HDate } from "@hebcal/core";
+
+export function modulo(n: number, m: number) {
+  return ((n % m) + m) % m;
+}
+
+export function newArray(rowSize: number, colSize: number) {
+  const rows = new Array(rowSize).fill(0);
+  const columns = new Array(colSize).fill(0);
+
+  return [...rows.map(() => [...columns])];
+}
 
 const getDays = (milliseconds: number) =>
   Math.round(milliseconds / (1000 * 60 * 60 * 24)) + 1;
@@ -50,20 +61,17 @@ export const createArray = (firstDay: Date, lastDay: Date) => {
     daysForEachUniqueMonth.push(numOfDaysInMonth(currentMonth));
   }
 
-  const firstArray = new Array(numOfWeeksBetweenDates).fill(0);
-  const anotherArray = new Array(7).fill(0);
-
-  const newArray = (() => {
-    return [...firstArray.map(() => [...anotherArray])];
-  })();
+  const newCalendar = newArray(numOfWeeksBetweenDates, 7);
 
   //test letterdays, will need to lift this to state
   const letterDays = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
   let counter: Counter = {
     date: firstDate - firstDayId - 1,
+    daysElapsed: 0,
     week: 0,
     month: firstMonth,
+    monthsElapsed: 0,
     year: firstYear,
     letterDays: 0,
     occurence: 0,
@@ -72,6 +80,8 @@ export const createArray = (firstDay: Date, lastDay: Date) => {
 
   const tick = (daysInCurrentMonth: number, j: number) => {
     counter.date++;
+    counter.daysElapsed++;
+
     if (counter.date > 0) {
       counter.occurenceCounter++;
     }
@@ -82,15 +92,15 @@ export const createArray = (firstDay: Date, lastDay: Date) => {
     if (j === 6) counter.week++;
     if (counter.date === daysInCurrentMonth) {
       counter.month++;
-
-      if (counter.month === 12) {
-        counter.year++;
-        counter.month = 0;
-      }
+      counter.monthsElapsed++;
       counter.date = 0;
       counter.week = 0;
       counter.occurence = 0;
       counter.occurenceCounter = 0;
+      if (counter.month === 12) {
+        counter.year++;
+        counter.month = 0;
+      }
     }
   };
 
@@ -105,11 +115,10 @@ export const createArray = (firstDay: Date, lastDay: Date) => {
     return date === roshHashanah || date === yomKippur;
   };
 
-  for (let i = 0; i < newArray.length; i++) {
-    for (let j = 0; j < newArray[i].length; j++) {
+  for (let i = 0; i < newCalendar.length; i++) {
+    for (let j = 0; j < newCalendar[i].length; j++) {
       //array of # of days in each month present in date range
-      const daysInCurrentMonth =
-        daysForEachUniqueMonth[counter.month - firstMonth];
+      const daysInCurrentMonth = daysForEachUniqueMonth[counter.monthsElapsed];
 
       //condition to skip weekends
       if (j === 0 || j === 6) {
@@ -171,7 +180,7 @@ export const createArray = (firstDay: Date, lastDay: Date) => {
           ? -1
           : (counter.letterDays - firstDayId) % letterDays.length;
 
-      newArray[i][j] =
+      newCalendar[i][j] =
         letterDaysId < 0
           ? 0
           : months[counter.month] + letterDays[letterDaysId] + counter.date;
@@ -182,5 +191,5 @@ export const createArray = (firstDay: Date, lastDay: Date) => {
     }
   }
 
-  return newArray;
+  return newCalendar;
 };
