@@ -17,6 +17,7 @@ export type Counter = {
   date: number;
   week: number;
   month: number;
+  year: number;
   letterDays: number;
   occurence: number;
   occurenceCounter: number;
