@@ -16,7 +16,7 @@ export enum Month {
   MARCH = "March",
   APRIL = "April",
   MAY = "May",
-  JUNE = "May",
+  JUNE = "June",
   JULY = "July",
   AUGUST = "August",
   SEPTEMBER = "September",
@@ -53,6 +53,7 @@ export const months = [
 export const staticHolidays = [
   [
     {
+      month: 0,
       date: 1,
       name: "New Year's Day",
       //if the month starts on a sunday, this function evaluates to false,
@@ -60,6 +61,7 @@ export const staticHolidays = [
       specialConditions: ({ date }: Counter, j: number) => date !== j,
     },
     {
+      month: 0,
       date: 2,
       name: "New Year's Day Observance",
       //if the month starts on a sunday, this function evaluates to true,
@@ -76,16 +78,16 @@ export const staticHolidays = [
   [],
   [],
   [],
-  [{ date: 11, name: "Veteran's Day" }],
+  [{ month: 10, date: 11, name: "Veteran's Day" }],
   [
-    { date: 24, name: "Christmas Eve" },
-    { date: 25, name: "Christmas" },
-    { date: 26, name: "Winter Break" },
-    { date: 27, name: "Winter Break" },
-    { date: 28, name: "Winter Break" },
-    { date: 29, name: "Winter Break" },
-    { date: 30, name: "Winter Break" },
-    { date: 31, name: "New Year's Eve" },
+    { month: 11, date: 24, name: "Christmas Eve" },
+    { month: 11, date: 25, name: "Christmas" },
+    { month: 11, date: 26, name: "Winter Break" },
+    { month: 11, date: 27, name: "Winter Break" },
+    { month: 11, date: 28, name: "Winter Break" },
+    { month: 11, date: 29, name: "Winter Break" },
+    { month: 11, date: 30, name: "Winter Break" },
+    { month: 11, date: 31, name: "New Year's Eve" },
   ],
 ];
 
