@@ -85,7 +85,6 @@ export const SettingsScrollArea = ({
             content={getYearsArray()}
             value={newSettings.firstDay}
             handleClick={(value: string) => {
-              console.log(value);
               const newDateParam = value.split("/");
               setNewSettings((prev) => {
                 const firstDay = new Date(
