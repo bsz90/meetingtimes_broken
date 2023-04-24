@@ -1,6 +1,6 @@
 import { useMemo, useReducer, useState } from "react";
 import { months, weekDays } from "./constants";
-import { createArray, modulo, newArray } from "./utils";
+import { createCalendar, modulo, newArray } from "./utils";
 import { Week } from "./Week";
 
 const initialState = { count: 0 };
@@ -26,7 +26,7 @@ function reducer(
 export function Calendar() {
   const [{ count }, dispatch] = useReducer(reducer, initialState);
 
-  const [hover, setHover] = useState<number[][]>(newArray(6, 7));
+  const [hover, setHover] = useState<number[][]>(newArray(6, 7, 0));
 
   const today = useMemo(() => new Date(), []);
 
@@ -35,7 +35,6 @@ export function Calendar() {
     () => modulo(today.getMonth() + count, 12),
     [count, today]
   );
-  console.log(today.getMonth() + count);
 
   const year = today.getFullYear();
 
@@ -45,7 +44,7 @@ export function Calendar() {
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  console.log(createArray(new Date(2022, 8, 1), new Date(2023, 1, 28)));
+  // console.log(createArray(new Date(2022, 8, 1), new Date(2023, 1, 28)));
 
   return (
     <div className="border-2 capitalize flex flex-col rounded-lg bg-blue-300/95 overflow-hidden">

@@ -24,6 +24,7 @@ export function Day({
   setHover: Dispatch<SetStateAction<number[][]>>;
 }) {
   const date = day + 1 - firstDayId;
+
   return (
     <button
       className={`h-12 w-12 ${
@@ -31,7 +32,7 @@ export function Day({
       } text-blue-400 overflow-hidden flex items-center justify-center text-center rounded-lg`}
       onPointerEnter={(event) => {
         setHover(() => {
-          let newCal = newArray(6, 7);
+          let newCal = newArray(6, 7, 0);
           newCal[weekId][dayId] = 1;
           return newCal;
         });
