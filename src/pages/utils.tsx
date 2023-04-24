@@ -337,22 +337,6 @@ export const getDaysInMonth = (date: Date) => {
   return new Date(year, month + 1, 0).getDate();
 };
 
-//function to get a specific date from a dynamicHoliday on a specific year
-const getDynamicDate = (date: DynamicDay, year: number) => {
-  const monthStart = new Date(year, date.month, 1);
-
-  const test = (i: number, j: number, count: Counter) =>
-    date.dateRange[0] <= count.date &&
-    count.date <= date.dateRange[1] &&
-    date.day === j;
-
-  const result = (count: Counter, year: number) => {
-    return new Date(year, count.month, count.date + 1);
-  };
-
-  return loop(year, monthStart, test, result);
-};
-
 //function to determine date of Easter
 export const getEaster = (year: number) => {
   var a = year % 19;
@@ -379,19 +363,6 @@ const getFutureDate = (date: Date, daysInFuture: number) => {
   futureDate.setDate(futureDate.getDate() + 56);
   return futureDate;
 };
-
-// console.log(
-//   `thanksgiving is ${getDynamicDate(
-//     {
-//       dateRange: [21, 27],
-//       week: 3,
-//       month: 10,
-//       day: 4,
-//       name: "Thanksgiving",
-//     },
-//     2022
-//   )}`
-// );
 
 export const getGoodFriday = (year: number) =>
   getDateBefore(getEaster(year), 2);
@@ -523,18 +494,3 @@ export const getYomKippur = (year: number) => {
 
   return loop(year, monthStart, test, result);
 };
-
-// console.log(
-//   getWeekOf(
-//     getDynamicDate(
-//       {
-//         dateRange: [21, 27],
-//         week: 3,
-//         month: 10,
-//         day: 4,
-//         name: "Thanksgiving",
-//       },
-//       2022
-//     )
-//   )
-// );
