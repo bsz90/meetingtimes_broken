@@ -13,8 +13,7 @@ import * as Separator from "@radix-ui/react-separator";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { defaultSettings } from "./constants";
-import { ThirdStep } from "./ThirdStep";
-import { SettingKey, Settings } from "./types";
+import { Settings } from "./types";
 import { deepCopy, deepEquals, newArray, uniqueKey } from "./utils";
 import { SettingsScrollArea } from "./SettingsScrollArea";
 import { SettingsCategories } from "./SettingsCategories";
@@ -116,16 +115,6 @@ export const AppSettings = ({
           </Content>
         </Portal>
       </Root>
-      {/* <div className="w-full flex flex-col items-center justify-center">
-        <h2 className="w-full h-24 flex items-center justify-center text-center bg-blue-500 text-5xl">
-          Settings
-        </h2>
-      </div>
-      <form className="w-full h-full flex flex-col normal-case text-md py-16 gap-6 text-blue-900">
-       <FirstStep data={data} setData={setData} />
-        <SecondStep />
-        <ThirdStep />
-      </form> */}
     </div>
   );
 };
